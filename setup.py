@@ -19,11 +19,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='truths',
-    version='1.1',
+    version='1.2',
     author='Trey Morris',
     author_email='trey@treymorris.com',
     description='auto generate truth tables',
     long_description=open('README.rst').read(),
+    install_requires=['prettytable'],
     classifiers=['Development Status :: 5 - Production/Stable',
                  'License :: OSI Approved :: Apache Software License'],
     keywords=['truth', 'table', 'truth table', 'truthtable', 'logic'],
