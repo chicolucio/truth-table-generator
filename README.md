@@ -12,6 +12,8 @@ start by creating some base variables
 ```python
 import truths
 print truths.Truths(['a', 'b', 'x'])
+```
+```
 +---+---+---+
 | a | b | x |
 +---+---+---+
