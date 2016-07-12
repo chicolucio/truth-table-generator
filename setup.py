@@ -19,10 +19,10 @@ from setuptools import setup, find_packages
 
 setup(
     name='truths',
-    version='1.0',
+    version='1.1',
     author='Trey Morris',
     author_email='trey@treymorris.com',
-    description='auth generate truth tables',
+    description='auto generate truth tables',
     long_description=open('README.rst').read(),
     classifiers=['Development Status :: 5 - Production/Stable',
                  'License :: OSI Approved :: Apache Software License'],
