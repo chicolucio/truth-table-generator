@@ -19,6 +19,9 @@ start by creating some base variables
 
     import truths
     print truths.Truths(['a', 'b', 'x'])
+
+::
+
     +---+---+---+
     | a | b | x |
     +---+---+---+
@@ -41,6 +44,9 @@ now let's use those base variables and pass in some phrases!
 
     from truths import Truths
     print Truths(['a', 'b', 'x', 'd'], ['(a and b)', 'a and b or x', 'a and (b or x) or d'])
+
+::
+
     +---+---+---+---+-----------+--------------+---------------------+
     | a | b | x | d | (a and b) | a and b or x | a and (b or x) or d |
     +---+---+---+---+-----------+--------------+---------------------+
@@ -71,6 +77,9 @@ neat eh? if you prefer True/False over the numbers pass ``ints=False``:
 
     from truths import Truths
     print Truths(['a', 'b', 'x', 'd'], ['(a and b)', 'a and b or x', 'a and (b or x) or d'], ints=False)
+
+::
+
     +-------+-------+-------+-------+-----------+--------------+---------------------+
     |   a   |   b   |   x   |   d   | (a and b) | a and b or x | a and (b or x) or d |
     +-------+-------+-------+-------+-----------+--------------+---------------------+
