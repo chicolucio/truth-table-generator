@@ -11,7 +11,7 @@ start by creating some base variables
 
 ```python
 import truths
-print truths.Truths(['a', 'b', 'x'])
+print(truths.Truths(['a', 'b', 'x']))
 ```
 ```
 +---+---+---+
@@ -35,7 +35,7 @@ python variable names. the phrases also have to be valid python
 
 ```python
 from truths import Truths
-print Truths(['a', 'b', 'cat', 'has_address'], ['(a and b)', 'a and b or cat', 'a and (b or cat) or has_address'])
+print(Truths(['a', 'b', 'cat', 'has_address'], ['(a and b)', 'a and b or cat', 'a and (b or cat) or has_address']))
 ```
 ```
 +---+---+-----+-------------+-----------+----------------+---------------------------------+
@@ -66,7 +66,7 @@ neat eh? if you prefer True/False over the numbers pass `ints=False`:
 
 ```python
 from truths import Truths
-print Truths(['a', 'b', 'x', 'd'], ['(a and b)', 'a and b or x', 'a and (b or x) or d'], ints=False)
+print(Truths(['a', 'b', 'x', 'd'], ['(a and b)', 'a and b or x', 'a and (b or x) or d'], ints=False))
 ```
 ```
 +-------+-------+-------+-------+-----------+--------------+---------------------+

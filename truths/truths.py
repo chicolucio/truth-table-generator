@@ -56,7 +56,7 @@ class Truths(object):
         # add the bases and evaluated phrases to create a single row
         row = [getattr(g, b) for b in self.base] + eval_phrases
         if self.ints:
-            return [int(item) for item in row]
+            return [int(c) for c in row]
         else:
             return row
 
