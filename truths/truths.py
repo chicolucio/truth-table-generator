@@ -25,25 +25,25 @@ class Gob(object):
 
 
 class Truths(object):
-    def __init__(self, base=None, phrases=None, ints=True):
-        if not base:
+    def __init__(self, bases=None, phrases=None, ints=True):
+        if not bases:
             raise Exception('Base items are required')
-        self.base = base
+        self.bases = bases
         self.phrases = phrases or []
         self.ints = ints
 
         # generate the sets of booleans for the bases
         self.base_conditions = list(itertools.product([False, True],
-                                                      repeat=len(base)))
+                                                      repeat=len(bases)))
 
         # regex to match whole words defined in self.bases
         # used to add object context to variables in self.phrases
-        self.p = re.compile(r'(?<!\w)(' + '|'.join(self.base) + ')(?!\w)')
+        self.p = re.compile(r'(?<!\w)(' + '|'.join(self.bases) + ')(?!\w)')
 
     def calculate(self, *args):
         # store bases in an object context
         g = Gob()
-        for a, b in zip(self.base, args):
+        for a, b in zip(self.bases, args):
             setattr(g, a, b)
 
         # add object context to any base variables in self.phrases
@@ -54,14 +54,14 @@ class Truths(object):
             eval_phrases.append(eval(item))
 
         # add the bases and evaluated phrases to create a single row
-        row = [getattr(g, b) for b in self.base] + eval_phrases
+        row = [getattr(g, b) for b in self.bases] + eval_phrases
         if self.ints:
             return [int(c) for c in row]
         else:
             return row
 
     def __str__(self):
-        t = PrettyTable(self.base + self.phrases)
+        t = PrettyTable(self.bases + self.phrases)
         for conditions_set in self.base_conditions:
             t.add_row(self.calculate(*conditions_set))
         return str(t)
