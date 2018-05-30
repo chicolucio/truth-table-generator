@@ -41,9 +41,9 @@ class Truths(object):
         # substitute bases with boolean values in self.phrases then evaluate
         # each phrase
         eval_phrases = []
-        for item in self.phrases:
-            item = self.p.sub(lambda match: str(bools[match.group(0)]), item)
-            eval_phrases.append(eval(item))
+        for phrase in self.phrases:
+            phrase = self.p.sub(lambda match: str(bools[match.group(0)]), phrase)
+            eval_phrases.append(eval(phrase))
 
         # add the bases and evaluated phrases to create a single row
         row = [val for key, val in bools.items()] + eval_phrases
