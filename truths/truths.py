@@ -20,10 +20,6 @@ from prettytable import PrettyTable
 import re
 
 
-class Gob(object):
-    pass
-
-
 class Truths(object):
     def __init__(self, bases=None, phrases=None, ints=True):
         if not bases:
@@ -41,20 +37,16 @@ class Truths(object):
         self.p = re.compile(r'(?<!\w)(' + '|'.join(self.bases) + ')(?!\w)')
 
     def calculate(self, *args):
-        # store bases in an object context
-        g = Gob()
-        for a, b in zip(self.bases, args):
-            setattr(g, a, b)
-
-        # add object context to any base variables in self.phrases
-        # then evaluate each
+        bools = dict(zip(self.bases, args))
+        # substitute bases with boolean values in self.phrases then evaluate
+        # each phrase
         eval_phrases = []
         for item in self.phrases:
-            item = self.p.sub(r'g.\1', item)
+            item = self.p.sub(r"bools['\1']", item)
             eval_phrases.append(eval(item))
 
         # add the bases and evaluated phrases to create a single row
-        row = [getattr(g, b) for b in self.bases] + eval_phrases
+        row = [val for key, val in bools.items()] + eval_phrases
         if self.ints:
             return [int(c) for c in row]
         else:
