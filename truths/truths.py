@@ -42,7 +42,7 @@ class Truths(object):
         # each phrase
         eval_phrases = []
         for item in self.phrases:
-            item = self.p.sub(r"bools['\1']", item)
+            item = self.p.sub(lambda match: str(bools[match.group(0)]), item)
             eval_phrases.append(eval(item))
 
         # add the bases and evaluated phrases to create a single row
