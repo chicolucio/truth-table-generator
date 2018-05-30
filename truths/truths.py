@@ -18,6 +18,97 @@
 import itertools
 from prettytable import PrettyTable
 import re
+import pyparsing
+
+# dict of boolean operations
+operations = {
+    'not':      (lambda x:      not x),
+    '-':        (lambda x:      not x),
+    '~':        (lambda x:      not x),
+
+    'or':       (lambda x, y:   x or y),
+    'nor':      (lambda x, y:   not (x or y)),
+    'xor':      (lambda x, y:   x != y),
+
+    'and':      (lambda x, y:   x and y),
+    'nand':     (lambda x, y:   not (x and y)),
+    'xand':     (lambda x, y:   not (x and y)),
+
+    '=>':       (lambda x, y:   (not x) or y),
+    '->':       (lambda x, y:   (not x) or y),
+    'implies':  (lambda x, y:   (not x) or y),
+
+    '=':        (lambda x, y:   x == y),
+    '==':       (lambda x, y:   x == y),
+    '!=':       (lambda x, y:   x != y),
+}
+
+
+def recursive_map(func, data):
+    """Recursively applies a map function to a list and all sublists."""
+    if isinstance(data, list):
+        return [recursive_map(func, elem) for elem in data]
+    else:
+        return func(data)
+
+
+def string_to_bool(s):
+    """Converts a string to boolean if string is either 'True' or 'False'
+    otherwise returns it unchanged.
+    """
+    if s == 'True':
+        return True
+    elif s == 'False':
+        return False
+    return s
+
+
+def solve_phrase(p):
+    """Recursively evaluates a logical phrase that has been grouped into
+    sublists where each list is one operation.
+    """
+    if isinstance(p, bool):
+        return p
+    if isinstance(p, list):
+        # list with just a list in it
+        if len(p) == 1:
+            return solve_phrase(p[0])
+        # single operand operation
+        if len(p) == 2:
+            return operations[p[0]](solve_phrase(p[1]))
+        # double operand operation
+        else:
+            return operations[p[1]](solve_phrase(p[0]), solve_phrase([p[2]]))
+
+
+def group_operations(p):
+    """Recursively groups logical operations into seperate lists based on
+    the order of operations such that each list is one operation.
+
+    Order of operations is:
+        not, and, or, implication
+    """
+    if isinstance(p, list):
+        if len(p) == 1:
+            return p
+        for x in ['not', '~', '-']:
+            while x in p:
+                index = p.index(x)
+                p[index] = [x, group_operations(p[index+1])]
+                p.pop(index+1)
+        for x in ['and', 'nand', 'xand']:
+            while x in p:
+                index = p.index(x)
+                p[index] = [group_operations(p[index-1]), x, group_operations(p[index+1])]
+                p.pop(index+1)
+                p.pop(index-1)
+        for x in ['or', 'nor', 'xor']:
+            while x in p:
+                index = p.index(x)
+                p[index] = [group_operations(p[index-1]), x, group_operations(p[index+1])]
+                p.pop(index+1)
+                p.pop(index-1)
+    return p
 
 
 class Truths(object):
@@ -36,14 +127,29 @@ class Truths(object):
         # used to add object context to variables in self.phrases
         self.p = re.compile(r'(?<!\w)(' + '|'.join(self.bases) + ')(?!\w)')
 
+        # uesd for parsing logical operations and parenthesis
+        self.to_match = pyparsing.Word(pyparsing.alphanums)
+        for item in itertools.chain(self.bases, [key for key, val in operations.items()]):
+            self.to_match |= item
+        self.parens = pyparsing.nestedExpr( '(', ')', content=self.to_match)
+
     def calculate(self, *args):
         bools = dict(zip(self.bases, args))
-        # substitute bases with boolean values in self.phrases then evaluate
-        # each phrase
+
         eval_phrases = []
         for phrase in self.phrases:
+            # substitute bases in phrase with boolean values as strings
             phrase = self.p.sub(lambda match: str(bools[match.group(0)]), phrase)
-            eval_phrases.append(eval(phrase))
+            # wrap phrase in parens
+            phrase = '(' + phrase + ')'
+            # parse the expression using pyparsing
+            interpreted = self.parens.parseString(phrase).asList()[0]
+            # convert any 'True' or 'False' to boolean values
+            interpreted = recursive_map(string_to_bool, interpreted)
+            # group operations
+            interpreted = group_operations(interpreted)
+            # evaluate the phrase
+            eval_phrases.append(solve_phrase(interpreted))
 
         # add the bases and evaluated phrases to create a single row
         row = [val for key, val in bools.items()] + eval_phrases
