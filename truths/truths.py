@@ -158,6 +158,12 @@ class Truths(object):
         else:
             return row
 
+    def asPrettyTable(self) -> PrettyTable:
+        t = PrettyTable(self.bases + self.phrases)
+        for conditions_set in self.base_conditions:
+            t.add_row(self.calculate(*conditions_set))
+        return t
+
     def __str__(self):
         t = PrettyTable(self.bases + self.phrases)
         for conditions_set in self.base_conditions:
