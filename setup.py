@@ -71,3 +71,7 @@ def setup_package():
           packages=find_packages(exclude=['tests', 'tests.*']),
           entry_points={'console_scripts': ['ttg_cli.py = truth_table.ttg_cli:clielement']},
           )
+
+
+if __name__ == "__main__":
+    setup_package()
