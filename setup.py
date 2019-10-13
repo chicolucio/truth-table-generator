@@ -23,7 +23,7 @@ setup(
     author='Trey Morris',
     author_email='trey@treymorris.com',
     description='auto generate truth tables',
-    long_description=open('README.rst').read(),
+    long_description=open('README.md').read(),
     install_requires=['PTable', 'pyparsing'],
     classifiers=['Development Status :: 5 - Production/Stable',
                  'License :: OSI Approved :: Apache Software License'],

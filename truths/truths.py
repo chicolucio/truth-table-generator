@@ -16,32 +16,29 @@
 #
 
 import itertools
-from prettytable import PrettyTable
 import re
+from prettytable import PrettyTable
 import pyparsing
 
 # dict of boolean operations
 operations = {
-    'not':      (lambda x:      not x),
-    '-':        (lambda x:      not x),
-    '~':        (lambda x:      not x),
+    'not':      (lambda x: not x),
+    '-':        (lambda x: not x),
+    '~':        (lambda x: not x),
 
-    'or':       (lambda x, y:   x or y),
-    'nor':      (lambda x, y:   not (x or y)),
-    'xor':      (lambda x, y:   x != y),
+    'or':       (lambda x, y: x or y),
+    'nor':      (lambda x, y: not (x or y)),
+    'xor':      (lambda x, y: x != y),
 
-    'and':      (lambda x, y:   x and y),
-    'nand':     (lambda x, y:   not (x and y)),
-    'xand':     (lambda x, y:   not (x and y)),
+    'and':      (lambda x, y: x and y),
+    'nand':     (lambda x, y: not (x and y)),
+    'xand':     (lambda x, y: not (x and y)),
 
-    '=>':       (lambda x, y:   (not x) or y),
-    '->':       (lambda x, y:   (not x) or y),
-    'implies':  (lambda x, y:   (not x) or y),
+    '=>':       (lambda x, y: (not x) or y),
+    'implies':  (lambda x, y: (not x) or y),
 
-    '=':        (lambda x, y:   x == y),
-    '==':       (lambda x, y:   x == y),
-    '!=':       (lambda x, y:   x != y),
-    '/':        (lambda x:      x)
+    '=':        (lambda x, y: x == y),
+    '!=':       (lambda x, y: x != y),
 }
 
 
@@ -100,13 +97,17 @@ def group_operations(p):
         for x in ['and', 'nand', 'xand']:
             while x in p:
                 index = p.index(x)
-                p[index] = [group_operations(p[index-1]), x, group_operations(p[index+1])]
+                p[index] = [group_operations(p[index-1]),
+                            x,
+                            group_operations(p[index+1])]
                 p.pop(index+1)
                 p.pop(index-1)
         for x in ['or', 'nor', 'xor']:
             while x in p:
                 index = p.index(x)
-                p[index] = [group_operations(p[index-1]), x, group_operations(p[index+1])]
+                p[index] = [group_operations(p[index-1]),
+                            x,
+                            group_operations(p[index+1])]
                 p.pop(index+1)
                 p.pop(index-1)
     return p
@@ -121,18 +122,19 @@ class Truths(object):
         self.ints = ints
 
         # generate the sets of booleans for the bases
-        self.base_conditions = list(itertools.product([False, True],
+        self.base_conditions = list(itertools.product([True, False],
                                                       repeat=len(bases)))
 
         # regex to match whole words defined in self.bases
         # used to add object context to variables in self.phrases
-        self.p = re.compile(r'(?<!\w)(' + '|'.join(self.bases) + ')(?!\w)')
+        self.p = re.compile(r'(?<!\w)(' + '|'.join(self.bases) + r')(?!\w)')
 
         # uesd for parsing logical operations and parenthesis
         self.to_match = pyparsing.Word(pyparsing.alphanums)
-        for item in itertools.chain(self.bases, [key for key, val in operations.items()]):
+        for item in itertools.chain(self.bases,
+                                    [key for key, val in operations.items()]):
             self.to_match |= item
-        self.parens = pyparsing.nestedExpr( '(', ')', content=self.to_match)
+        self.parens = pyparsing.nestedExpr('(', ')', content=self.to_match)
 
     def calculate(self, *args):
         bools = dict(zip(self.bases, args))
@@ -140,7 +142,7 @@ class Truths(object):
         eval_phrases = []
         for phrase in self.phrases:
             # substitute bases in phrase with boolean values as strings
-            phrase = self.p.sub(lambda match: str(bools[match.group(0)]), phrase)
+            phrase = self.p.sub(lambda match: str(bools[match.group(0)]), phrase) # NOQA long line
             # wrap phrase in parens
             phrase = '(' + phrase + ')'
             # parse the expression using pyparsing
