@@ -187,6 +187,15 @@ class Truths(object):
                      )
         return t
 
+    def valuation(self):
+        df = Truths.asPandas(self)
+        if sum(df.iloc[:, -1]) == len(df):
+            return 'Tautology'
+        elif sum(df.iloc[:, -1]) == 0:
+            return 'Contradiction'
+        else:
+            return 'Contingency'
+
     def __str__(self):
         t = Truths.asTabulate(self, index=False)
         return str(t)
