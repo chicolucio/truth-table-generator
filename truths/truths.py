@@ -23,6 +23,7 @@ import pandas as pd
 import numpy as np
 from tabulate import tabulate
 
+
 # dict of boolean operations
 operations = {
     'not':      (lambda x: not x),
