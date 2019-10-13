@@ -24,7 +24,7 @@ setup(
     author_email='trey@treymorris.com',
     description='auto generate truth tables',
     long_description=open('README.md').read(),
-    install_requires=['PTable', 'pyparsing', 'pandas'],
+    install_requires=['PTable', 'pyparsing', 'pandas', 'tabulate'],
     classifiers=['Development Status :: 5 - Production/Stable',
                  'License :: OSI Approved :: Apache Software License'],
     keywords=['truth', 'table', 'truth table', 'truthtable', 'logic'],

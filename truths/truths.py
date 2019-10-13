@@ -21,6 +21,7 @@ from prettytable import PrettyTable
 import pyparsing
 import pandas as pd
 import numpy as np
+from tabulate import tabulate
 
 # dict of boolean operations
 operations = {
@@ -174,8 +175,17 @@ class Truths(object):
         df = pd.DataFrame(columns=df_columns)
         for conditions_set in self.base_conditions:
             df.loc[len(df)] = self.calculate(*conditions_set)
-        df.index = np.arange( 1, len(df) + 1)  # index starting in one
+        df.index = np.arange(1, len(df) + 1)  # index starting in one
         return df
+
+    def asTabulate(self, index=True, table_format='psql', align='center'):
+        t = tabulate(Truths.asPandas(self),
+                     headers='keys',
+                     tablefmt=table_format,
+                     showindex=index,
+                     colalign=[align] * (len(Truths.asPandas(self).columns) + index)
+                     )
+        return t
 
     def __str__(self):
         t = PrettyTable(self.bases + self.phrases)
