@@ -19,6 +19,8 @@ import itertools
 import re
 from prettytable import PrettyTable
 import pyparsing
+import pandas as pd
+import numpy as np
 
 # dict of boolean operations
 operations = {
@@ -166,6 +168,14 @@ class Truths(object):
         for conditions_set in self.base_conditions:
             t.add_row(self.calculate(*conditions_set))
         return t
+
+    def asPandas(self):
+        df_columns = self.bases + self.phrases
+        df = pd.DataFrame(columns=df_columns)
+        for conditions_set in self.base_conditions:
+            df.loc[len(df)] = self.calculate(*conditions_set)
+        df.index = np.arange( 1, len(df) + 1)  # index starting in one
+        return df
 
     def __str__(self):
         t = PrettyTable(self.bases + self.phrases)
