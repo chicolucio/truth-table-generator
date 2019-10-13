@@ -188,7 +188,5 @@ class Truths(object):
         return t
 
     def __str__(self):
-        t = PrettyTable(self.bases + self.phrases)
-        for conditions_set in self.base_conditions:
-            t.add_row(self.calculate(*conditions_set))
+        t = Truths.asTabulate(self, index=False)
         return str(t)
