@@ -187,11 +187,18 @@ class Truths(object):
                      )
         return t
 
-    def valuation(self):
+    def valuation(self, col_number=-1):
         df = Truths.asPandas(self)
-        if sum(df.iloc[:, -1]) == len(df):
+        if col_number == -1:
+            pass
+        elif col_number not in (range(1, len(df.columns) + 1)):
+            raise Exception('Indexer is out-of-bounds')
+        else:
+            col_number = col_number - 1
+
+        if sum(df.iloc[:, col_number]) == len(df):
             return 'Tautology'
-        elif sum(df.iloc[:, -1]) == 0:
+        elif sum(df.iloc[:, col_number]) == 0:
             return 'Contradiction'
         else:
             return 'Contingency'
