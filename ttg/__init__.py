@@ -32,4 +32,4 @@
 #
 __all__ = ['Truths']
 
-from .truth_table import Truths
+from .ttg import Truths

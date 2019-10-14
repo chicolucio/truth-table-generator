@@ -31,6 +31,10 @@
 #   limitations under the License.
 #
 
+"""
+truth-table-generator main file
+"""
+
 import itertools
 import re
 from prettytable import PrettyTable
@@ -41,7 +45,7 @@ from tabulate import tabulate
 
 
 # dict of boolean operations
-operations = {
+OPERATIONS = {
     'not':      (lambda x: not x),
     '-':        (lambda x: not x),
     '~':        (lambda x: not x),
@@ -69,70 +73,74 @@ def recursive_map(func, data):
         return func(data)
 
 
-def string_to_bool(s):
+def string_to_bool(string):
     """Converts a string to boolean if string is either 'True' or 'False'
     otherwise returns it unchanged.
     """
-    if s == 'True':
+    if string == 'True':
         return True
-    elif s == 'False':
+    elif string == 'False':
         return False
-    return s
+    return string
 
 
-def solve_phrase(p):
+def solve_phrase(phrase):
     """Recursively evaluates a logical phrase that has been grouped into
     sublists where each list is one operation.
     """
-    if isinstance(p, bool):
-        return p
-    if isinstance(p, list):
+    if isinstance(phrase, bool):
+        return phrase
+    if isinstance(phrase, list):
         # list with just a list in it
-        if len(p) == 1:
-            return solve_phrase(p[0])
+        if len(phrase) == 1:
+            return solve_phrase(phrase[0])
         # single operand operation
-        if len(p) == 2:
-            return operations[p[0]](solve_phrase(p[1]))
+        if len(phrase) == 2:
+            return OPERATIONS[phrase[0]](solve_phrase(phrase[1]))
         # double operand operation
         else:
-            return operations[p[1]](solve_phrase(p[0]), solve_phrase([p[2]]))
+            return OPERATIONS[phrase[1]](solve_phrase(phrase[0]),
+                                         solve_phrase([phrase[2]]))
 
 
-def group_operations(p):
+def group_operations(phrase):
     """Recursively groups logical operations into seperate lists based on
     the order of operations such that each list is one operation.
 
     Order of operations is:
         not, and, or, implication
     """
-    if isinstance(p, list):
-        if len(p) == 1:
-            return p
-        for x in ['not', '~', '-']:
-            while x in p:
-                index = p.index(x)
-                p[index] = [x, group_operations(p[index+1])]
-                p.pop(index+1)
-        for x in ['and', 'nand']:
-            while x in p:
-                index = p.index(x)
-                p[index] = [group_operations(p[index-1]),
-                            x,
-                            group_operations(p[index+1])]
-                p.pop(index+1)
-                p.pop(index-1)
-        for x in ['or', 'nor', 'xor']:
-            while x in p:
-                index = p.index(x)
-                p[index] = [group_operations(p[index-1]),
-                            x,
-                            group_operations(p[index+1])]
-                p.pop(index+1)
-                p.pop(index-1)
-    return p
+    if isinstance(phrase, list):
+        if len(phrase) == 1:
+            return phrase
+        for operator in ['not', '~', '-']:
+            while operator in phrase:
+                index = phrase.index(operator)
+                phrase[index] = [operator, group_operations(phrase[index+1])]
+                phrase.pop(index+1)
+        for operator in ['and', 'nand']:
+            while operator in phrase:
+                index = phrase.index(operator)
+                phrase[index] = [group_operations(phrase[index-1]),
+                                 operator,
+                                 group_operations(phrase[index+1])]
+                phrase.pop(index+1)
+                phrase.pop(index-1)
+        for operator in ['or', 'nor', 'xor']:
+            while operator in phrase:
+                index = phrase.index(operator)
+                phrase[index] = [group_operations(phrase[index-1]),
+                                 operator,
+                                 group_operations(phrase[index+1])]
+                phrase.pop(index+1)
+                phrase.pop(index-1)
+    return phrase
 
 
 class Truths:
+    """
+    Class Truhts with modules for table formatting, valuation and CLI
+    """
     def __init__(self, bases=None, phrases=None, ints=True):
         if not bases:
             raise Exception('Base items are required')
@@ -151,11 +159,14 @@ class Truths:
         # uesd for parsing logical operations and parenthesis
         self.to_match = pyparsing.Word(pyparsing.alphanums)
         for item in itertools.chain(self.bases,
-                                    [key for key, val in operations.items()]):
+                                    [key for key, val in OPERATIONS.items()]):
             self.to_match |= item
         self.parens = pyparsing.nestedExpr('(', ')', content=self.to_match)
 
     def calculate(self, *args):
+        """
+        Evaluates the logical value for each expression
+        """
         bools = dict(zip(self.bases, args))
 
         eval_phrases = []
@@ -180,13 +191,19 @@ class Truths:
         else:
             return row
 
-    def asPrettyTable(self) -> PrettyTable:
-        t = PrettyTable(self.bases + self.phrases)
+    def as_prettytable(self):
+        """
+        Returns table using PrettyTable package
+        """
+        table = PrettyTable(self.bases + self.phrases)
         for conditions_set in self.base_conditions:
-            t.add_row(self.calculate(*conditions_set))
-        return t
+            table.add_row(self.calculate(*conditions_set))
+        return table
 
-    def asPandas(self):
+    def as_pandas(self):
+        """
+        Table as Pandas DataFrame
+        """
         df_columns = self.bases + self.phrases
         df = pd.DataFrame(columns=df_columns)
         for conditions_set in self.base_conditions:
@@ -194,17 +211,24 @@ class Truths:
         df.index = np.arange(1, len(df) + 1)  # index starting in one
         return df
 
-    def asTabulate(self, index=True, table_format='psql', align='center'):
-        t = tabulate(Truths.asPandas(self),
-                     headers='keys',
-                     tablefmt=table_format,
-                     showindex=index,
-                     colalign=[align] * (len(Truths.asPandas(self).columns) + index)  # NOQA long
-                     )
-        return t
+    def as_tabulate(self, index=True, table_format='psql', align='center'):
+        """
+        Returns table using tabulate package
+        """
+        table = tabulate(Truths.as_pandas(self),
+                         headers='keys',
+                         tablefmt=table_format,
+                         showindex=index,
+                         colalign=[align] * (len(Truths.as_pandas(self).columns) + index)  # NOQA long
+                         )
+        return table
 
     def valuation(self, col_number=-1):
-        df = Truths.asPandas(self)
+        """
+        Evaluates an expression in a table column as a tautology, a
+        contradiction or a contingency
+        """
+        df = Truths.as_pandas(self)
         if col_number == -1:
             pass
         elif col_number not in range(1, len(df.columns) + 1):
@@ -220,5 +244,5 @@ class Truths:
             return 'Contingency'
 
     def __str__(self):
-        t = Truths.asTabulate(self, index=False)
-        return str(t)
+        table = Truths.as_tabulate(self, index=False)
+        return str(table)

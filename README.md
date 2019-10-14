@@ -32,7 +32,7 @@ or contingency.
 First, let's import the package. `ttg` stands for *truth-table-generator*.
 
 ```python
-import truth_table as ttg
+import ttg
 ```
 
 A truth table has one column for each input variable (for example, *p* and *q*),
@@ -131,7 +131,7 @@ The command `print(table)` renders the standard table as seen on above examples:
 |  0  |  0  |    1     |    1    |
 +-----+-----+----------+---------+
 ```
-The command `print(table.asPrettyTable())` renders the table with PrettyTable
+The command `print(table.as_prettytable())` renders the table with PrettyTable
 package as on the original version of this package:
 ```
 +---+---+--------+-------+
@@ -147,7 +147,7 @@ As can be seen, the PrettyTable output has less blank spaces. However, the
 PrettyTable package has much less output options and it is deprecated. So I
 decided to use the Tabulate package as standard.
 
-The command `print(table.asTabulate())` renders the table with Tabulate
+The command `print(table.as_tabulate())` renders the table with Tabulate
 package. The first column presents line numbers (that can be disabled with
 the parameter `index=False`):
 ```
@@ -165,7 +165,7 @@ Using Tabulate, we can use any of the formats available. Let's output a LaTeX
 table without the line number column:
 
 ```python
-print(table.asTabulate(index=False, table_format='latex'))
+print(table.as_tabulate(index=False, table_format='latex'))
 ```
 ```
 \begin{tabular}{cccc}
@@ -183,7 +183,7 @@ print(table.asTabulate(index=False, table_format='latex'))
 ### Formatting options with Pandas
 
 With an IPython terminal or a Jupyter Notebook, it is possible to render a Pandas
-DataFrame with `table.asPandas()`:
+DataFrame with `table.as_pandas()`:
 
 ![pandas01](images/pandas01.png)
 

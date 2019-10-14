@@ -31,7 +31,7 @@ AUTHOR = "Francisco Bustamante"
 EMAIL = "chicolucio@gmail.com"
 VERSION = '1.0.0'
 KEYWORDS = ['truth', 'table', 'truth table', 'truthtable', 'generator',
-            'logic', 'tautology']
+            'logic', 'tautology', 'ttg']
 
 
 CLASSIFIERS = ['Development Status :: 5 - Production/Stable',

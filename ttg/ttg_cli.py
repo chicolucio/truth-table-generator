@@ -22,7 +22,7 @@ CLI for the truth_table_generator package.
 
 import argparse
 import ast
-import truth_table
+import ttg
 
 
 def clielement():
@@ -34,7 +34,7 @@ def clielement():
     parser.add_argument('variables',
                         help="List of variables e. g. \"['p', 'q']\"")
     parser.add_argument('-p', '--propositions',
-                        help="List of propositions e. g. \"['p or q', 'p and q']\"")
+                        help="List of propositions e. g. \"['p or q', 'p and q']\"")  # NOQA long line
     parser.add_argument('-i', '--ints', default='True',
                         help='True for 0 and 1; False for words')
     args = parser.parse_args()
@@ -45,10 +45,10 @@ def clielement():
     print()
     if args.propositions is None:
         propositions = []
-        print(truth_table.Truths(variables, propositions, ints))
+        print(ttg.Truths(variables, propositions, ints))
     else:
         propositions = ast.literal_eval(args.propositions)
-        print(truth_table.Truths(variables, propositions, ints))
+        print(ttg.Truths(variables, propositions, ints))
     print()
 
 
