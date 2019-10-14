@@ -1,96 +1,378 @@
-# truths - auto generate truth tables
-truths is a simple tool that allows you to quickly generate a truth table from python variable names and phrases
+# truth-table-generator
+
+**truth-table-generator** is a tool that allows to generate a truth table.
+It is a fork of *truths* by [tr3buchet](https://github.com/tr3buchet/truths).
+
+![Multiple outputs](images/ttg_small.png)
+
+It merges some of the pull requests in the original and other external helpers.
+The following are some of the changes and enhancements from the original:
+
+- [tabulate](https://github.com/astanin/python-tabulate) instead of obsolete
+[prettytable](https://code.google.com/archive/p/prettytable/) as main tool to
+represent tabular data in ASCII tables (PrettyTable version is still available).
+    - so there are many table formats available as such LaTeX, Org Tables, HTML
+    and all others cited on [tabulate docs](https://github.com/astanin/python-tabulate)
+- the table is now a Pandas DataFrame so you can make the output more visually
+appealing with [Pandas Styling](https://pandas.pydata.org/pandas-docs/stable/user_guide/style.html).
+See examples below.
+- new function `valuation` that eval a proposition as a tautology, contradiction
+or contingency.
+- new command line interface (CLI) for printing a truth table from terminal.
+
+## Installation
+
+`pip install truth-table-generator`
 
 
-## install
-`pip install truths` or `git clone` and `pip install -e` to play with the code
+## Usage
 
+### Importing and syntax
 
-### use is simple:
-start by creating some base variables
-
-```python
-import truths
-print(truths.Truths(['a', 'b', 'x']))
-```
-```
-+---+---+---+
-| a | b | x |
-+---+---+---+
-| 0 | 0 | 0 |
-| 0 | 0 | 1 |
-| 0 | 1 | 0 |
-| 0 | 1 | 1 |
-| 1 | 0 | 0 |
-| 1 | 0 | 1 |
-| 1 | 1 | 0 |
-| 1 | 1 | 1 |
-+---+---+---+
-```
-
-
-### add some phrases
-now let's use those base variables and pass in some phrases! your base variables can be anything you want but must be valid
-python variable names. the phrases also have to be valid python
+First, let's import the module. `ttg` stands for *truth-table-generator*.
 
 ```python
-from truths import Truths
-print(Truths(['a', 'b', 'cat', 'has_address'], ['(a and b)', 'a and b or cat', 'a and (b or cat) or has_address']))
-```
-```
-+---+---+-----+-------------+-----------+----------------+---------------------------------+
-| a | b | cat | has_address | (a and b) | a and b or cat | a and (b or cat) or has_address |
-+---+---+-----+-------------+-----------+----------------+---------------------------------+
-| 0 | 0 |  0  |      0      |     0     |       0        |                0                |
-| 0 | 0 |  0  |      1      |     0     |       0        |                1                |
-| 0 | 0 |  1  |      0      |     0     |       1        |                0                |
-| 0 | 0 |  1  |      1      |     0     |       1        |                1                |
-| 0 | 1 |  0  |      0      |     0     |       0        |                0                |
-| 0 | 1 |  0  |      1      |     0     |       0        |                1                |
-| 0 | 1 |  1  |      0      |     0     |       1        |                0                |
-| 0 | 1 |  1  |      1      |     0     |       1        |                1                |
-| 1 | 0 |  0  |      0      |     0     |       0        |                0                |
-| 1 | 0 |  0  |      1      |     0     |       0        |                1                |
-| 1 | 0 |  1  |      0      |     0     |       1        |                1                |
-| 1 | 0 |  1  |      1      |     0     |       1        |                1                |
-| 1 | 1 |  0  |      0      |     1     |       1        |                1                |
-| 1 | 1 |  0  |      1      |     1     |       1        |                1                |
-| 1 | 1 |  1  |      0      |     1     |       1        |                1                |
-| 1 | 1 |  1  |      1      |     1     |       1        |                1                |
-+---+---+-----+-------------+-----------+----------------+---------------------------------+
+import truth_table as ttg
 ```
 
-
-### prefer boolean words?
-neat eh? if you prefer True/False over the numbers pass `ints=False`:
+A truth table has one column for each input variable (for example, *p* and *q*),
+and one final column showing all of the possible results of the logical
+operation that the table represents. If the input has only one list of strings,
+each string is considered an input variable:
 
 ```python
-from truths import Truths
-print(Truths(['a', 'b', 'x', 'd'], ['(a and b)', 'a and b or x', 'a and (b or x) or d'], ints=False))
+print(ttg.Truths(['p', 'q', 'r']))
 ```
 ```
-+-------+-------+-------+-------+-----------+--------------+---------------------+
-|   a   |   b   |   x   |   d   | (a and b) | a and b or x | a and (b or x) or d |
-+-------+-------+-------+-------+-----------+--------------+---------------------+
-| False | False | False | False |   False   |    False     |        False        |
-| False | False | False |  True |   False   |    False     |         True        |
-| False | False |  True | False |   False   |     True     |        False        |
-| False | False |  True |  True |   False   |     True     |         True        |
-| False |  True | False | False |   False   |    False     |        False        |
-| False |  True | False |  True |   False   |    False     |         True        |
-| False |  True |  True | False |   False   |     True     |        False        |
-| False |  True |  True |  True |   False   |     True     |         True        |
-|  True | False | False | False |   False   |    False     |        False        |
-|  True | False | False |  True |   False   |    False     |         True        |
-|  True | False |  True | False |   False   |     True     |         True        |
-|  True | False |  True |  True |   False   |     True     |         True        |
-|  True |  True | False | False |    True   |     True     |         True        |
-|  True |  True | False |  True |    True   |     True     |         True        |
-|  True |  True |  True | False |    True   |     True     |         True        |
-|  True |  True |  True |  True |    True   |     True     |         True        |
-+-------+-------+-------+-------+-----------+--------------+---------------------+
++-----+-----+-----+
+|  p  |  q  |  r  |
+|-----+-----+-----|
+|  1  |  1  |  1  |
+|  1  |  1  |  0  |
+|  1  |  0  |  1  |
+|  1  |  0  |  0  |
+|  0  |  1  |  1  |
+|  0  |  1  |  0  |
+|  0  |  0  |  1  |
+|  0  |  0  |  0  |
++-----+-----+-----+
 ```
 
+A second list of strings can be parsed with propositional expressions created
+with logical operators.
 
-### how it works
-check out the code! behind the scenes it's putting the bases in an object context and generating a grid of values for them. then, the phrases are `eval`uated in the object's context against each row in that grid of values
+```python
+print(ttg.Truths(['p', 'q', 'r'], ['p and q and r', 'p or q or r', '(p or (~q)) => r']))
+```
+```
++-----+-----+-----+-----------------+---------------+--------------------+
+|  p  |  q  |  r  |  p and q and r  |  p or q or r  |  (p or (~q)) => r  |
+|-----+-----+-----+-----------------+---------------+--------------------|
+|  1  |  1  |  1  |        1        |       1       |         1          |
+|  1  |  1  |  0  |        0        |       1       |         0          |
+|  1  |  0  |  1  |        0        |       1       |         1          |
+|  1  |  0  |  0  |        0        |       1       |         0          |
+|  0  |  1  |  1  |        0        |       1       |         1          |
+|  0  |  1  |  0  |        0        |       1       |         1          |
+|  0  |  0  |  1  |        0        |       1       |         1          |
+|  0  |  0  |  0  |        0        |       0       |         0          |
++-----+-----+-----+-----------------+---------------+--------------------+
+```
+
+### Operators and their representations:
+
+- *negation*: `'not'`, `'-'`, `'~'`
+- *logical disjunction*: `'or'`
+- *logical nor*: `'nor'`
+- *exclusive disjunction*: `'xor'`, `'!='`
+- *logical conjunction*:  `'and'`
+- *logical NAND*: `'nand'`
+- *material implication*: `'=>'`, `'implies'`
+- *logical biconditional*: `'='`
+
+**Note**: Use parentheses! Especially with the negation operator. Use tables
+above and below as reference. Although precedence rules are used, sometimes
+precedence between conjunction and disjunction is unspecified requiring to
+ provide it explicitly in given formula with parentheses.
+
+### Showing words (True / False)
+
+If you prefer the words True and False instead of numbers 0 and 1, there is a
+third parameter, boolean type, `ints` that can be set to `False`:
+
+```python
+print(ttg.Truths(['p', 'q'], ['p and q', 'p or q', '(p or (~q)) => (~p)'], ints=False))
+```
+```
++-------+-------+-----------+----------+-----------------------+
+|   p   |   q   |  p and q  |  p or q  |  (p or (~q)) => (~p)  |
+|-------+-------+-----------+----------+-----------------------|
+| True  | True  |   True    |   True   |         False         |
+| True  | False |   False   |   True   |         False         |
+| False | True  |   False   |   True   |         True          |
+| False | False |   False   |  False   |         True          |
++-------+-------+-----------+----------+-----------------------+
+```
+
+### Formatting options with PrettyTable and Tabulate
+
+For more formatting options, let's create a truth table variable:
+```python
+table = ttg.Truths(['p', 'q'], ['p => q', 'p = q'])
+```
+The command `print(table)` renders the standard table as seen on above examples:
+```
++-----+-----+----------+---------+
+|  p  |  q  |  p => q  |  p = q  |
+|-----+-----+----------+---------|
+|  1  |  1  |    1     |    1    |
+|  1  |  0  |    0     |    0    |
+|  0  |  1  |    1     |    0    |
+|  0  |  0  |    1     |    1    |
++-----+-----+----------+---------+
+```
+The command `print(table.asPrettyTable())` renders the table with PrettyTable
+module as on the original version of this module:
+```
++---+---+--------+-------+
+| p | q | p => q | p = q |
++---+---+--------+-------+
+| 1 | 1 |   1    |   1   |
+| 1 | 0 |   0    |   0   |
+| 0 | 1 |   1    |   0   |
+| 0 | 0 |   1    |   1   |
++---+---+--------+-------+
+```
+As can be seen, the PrettyTable output has less blank spaces. However, the
+PrettyTable module has much less output options and it is deprecated. So I
+decided to use the Tabulate module as standard.
+
+The command `print(table.asTabulate())` renders the table with Tabulate
+module. The first column presents line numbers (that can be disabled with
+the parameter `index=False`):
+```
++----+-----+-----+----------+---------+
+|    |  p  |  q  |  p => q  |  p = q  |
+|----+-----+-----+----------+---------|
+| 1  |  1  |  1  |    1     |    1    |
+| 2  |  1  |  0  |    0     |    0    |
+| 3  |  0  |  1  |    1     |    0    |
+| 4  |  0  |  0  |    1     |    1    |
++----+-----+-----+----------+---------+
+```
+
+Using Tabulate, we can use any of the formats available. Let's output a LaTeX
+table without the line number column:
+
+```python
+print(table.asTabulate(index=False, table_format='latex'))
+```
+```
+\begin{tabular}{cccc}
+\hline
+  p  &  q  &  p =\ensuremath{>} q  &  p = q  \\
+\hline
+  1  &  1  &    1     &    1    \\
+  1  &  0  &    0     &    0    \\
+  0  &  1  &    1     &    0    \\
+  0  &  0  &    1     &    1    \\
+\hline
+\end{tabular}
+```
+
+### Formatting options with Pandas
+
+With an IPython terminal or a Jupyter Notebook, it is possible to render a Pandas
+DataFrame with `table.asPandas()`:
+
+![pandas01](images/pandas01.png)
+
+And this output can be modified with Pandas Styling
+
+![pandas02](images/pandas02.png)
+
+More advanced modifications can be done with functions that apply styling changes.
+See the [tutorial notebook]() for examples. See the image below for a fancy
+example with two lines and two columns highlighted with yellow background and
+different colors for True and False.
+
+![pandas03](images/pandas03.png)
+
+### The `valuation` function
+
+Let's see the how to use the `valuation` function with a new truth table:
+```python
+table_val = ttg.Truths(['p', 'q'], ['p = q', 'p and (~p)', '(p and q) => p'])
+print(table_val)
+```
+```
++-----+-----+---------+--------------+------------------+
+|  p  |  q  |  p = q  |  p and (~p)  |  (p and q) => p  |
+|-----+-----+---------+--------------+------------------|
+|  1  |  1  |    1    |      0       |        1         |
+|  1  |  0  |    0    |      0       |        1         |
+|  0  |  1  |    0    |      0       |        1         |
+|  0  |  0  |    1    |      0       |        1         |
++-----+-----+---------+--------------+------------------+
+```
+Without arguments, the `valuation` function classifies the *last column* as a
+tautology, a contradiction or a contingency:
+```python
+table_val.valuation()
+```
+```
+'Tautology'
+```
+If a integer is used as argument, the function classifies the correspondent
+column:
+```python
+table_val.valuation(3)
+```
+```
+'Contingency'
+```
+```python
+table_val.valuation(4)
+```
+```
+'Contradiction'
+```
+
+### CLI utility
+
+For those who work in the terminal there is a simple command line interface
+(CLI) for printing tables. The script name is `ttg_cly.py` and it accepts
+the following syntax according to its `--help`:
+
+```
+usage: ttg_cli.py [-h] [-p PROPOSITIONS] [-i INTS] variables
+
+positional arguments:
+  variables             List of variables e. g. "['p', 'q']"
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -p PROPOSITIONS, --propositions PROPOSITIONS
+                        List of propositions e. g. "['p or q', 'p and q']"
+  -i INTS, --ints INTS  True for 0 and 1; False for words
+```
+
+As seen, the list of variables is mandatory. Note that the lists must be between
+`"`.
+
+```bash
+$ ttg_cli.py "['p', 'q', 'r']"
+```
+```
++-----+-----+-----+
+|  p  |  q  |  r  |
+|-----+-----+-----|
+|  1  |  1  |  1  |
+|  1  |  1  |  0  |
+|  1  |  0  |  1  |
+|  1  |  0  |  0  |
+|  0  |  1  |  1  |
+|  0  |  1  |  0  |
+|  0  |  0  |  1  |
+|  0  |  0  |  0  |
++-----+-----+-----+
+```
+
+The CLI utility also has an option, `-i`, to show words instead of numbers:
+```bash
+$ ttg_cli.py "['p', 'q', 'r']" -i False
+```
+```
++-------+-------+-------+
+|   p   |   q   |   r   |
+|-------+-------+-------|
+| True  | True  | True  |
+| True  | True  | False |
+| True  | False | True  |
+| True  | False | False |
+| False | True  | True  |
+| False | True  | False |
+| False | False | True  |
+| False | False | False |
++-------+-------+-------+
+```
+
+A `-p` parameter must be before the propositions list:
+```bash
+$ ttg_cli.py "['p', 'q', 'r']" -p "['p or q', 'p and q or r']"
+```
+```
++-----+-----+-----+----------+----------------+
+|  p  |  q  |  r  |  p or q  |  p and q or r  |
+|-----+-----+-----+----------+----------------|
+|  1  |  1  |  1  |    1     |       1        |
+|  1  |  1  |  0  |    1     |       1        |
+|  1  |  0  |  1  |    1     |       1        |
+|  1  |  0  |  0  |    1     |       0        |
+|  0  |  1  |  1  |    1     |       1        |
+|  0  |  1  |  0  |    1     |       0        |
+|  0  |  0  |  1  |    0     |       1        |
+|  0  |  0  |  0  |    0     |       0        |
++-----+-----+-----+----------+----------------+
+```
+
+With words instead of numbers:
+
+```bash
+$ ttg_cli.py "['p', 'q', 'r']" -p "['p or q', 'p and q or r']" -i False
+```
+```
++-------+-------+-------+----------+----------------+
+|   p   |   q   |   r   |  p or q  |  p and q or r  |
+|-------+-------+-------+----------+----------------|
+| True  | True  | True  |   True   |      True      |
+| True  | True  | False |   True   |      True      |
+| True  | False | True  |   True   |      True      |
+| True  | False | False |   True   |     False      |
+| False | True  | True  |   True   |      True      |
+| False | True  | False |   True   |     False      |
+| False | False | True  |  False   |      True      |
+| False | False | False |  False   |     False      |
++-------+-------+-------+----------+----------------+
+```
+
+The real look of the table depends on your terminal appearance configuration.
+The green on black background screenshots from the first picture of this README
+are from my terminal.
+
+## Contributing
+
+All contributions are welcome.
+
+**Issues**
+
+Feel free to submit issues regarding:
+
+- recommendations
+- more examples for the tutorial
+- enhancement requests and new useful features
+- code bugs
+
+**Pull requests**
+
+- before starting to work on your pull request, please submit an issue first
+- fork the repo
+- clone the project to your own machine
+- commit changes to your own branch
+- push your work back up to your fork
+- submit a pull request so that your changes can be reviewed
+
+
+## License
+
+Apache 2.0, see [LICENSE](LICENSE)
+
+## Citing
+
+If you use *truth-table-generator* in a scientific publication or in classes, please consider citing as
+
+F. L. S. Bustamante, *truth-table-generator* - generating truth tables., 2019 - Available at: https://github.com/chicolucio/truth-table-generator
+
+## Funding
+
+If you enjoy this project and would like to see many more math and science related programming projects, I would greatly appreciate any assistance. Send me an e-mail to know how to assist. Many more projects are to come and your support will be rewarded with more STEM coding projects :-)

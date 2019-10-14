@@ -52,7 +52,6 @@ operations = {
 
     'and':      (lambda x, y: x and y),
     'nand':     (lambda x, y: not (x and y)),
-    'xand':     (lambda x, y: not (x and y)),
 
     '=>':       (lambda x, y: (not x) or y),
     'implies':  (lambda x, y: (not x) or y),
@@ -114,7 +113,7 @@ def group_operations(p):
                 index = p.index(x)
                 p[index] = [x, group_operations(p[index+1])]
                 p.pop(index+1)
-        for x in ['and', 'nand', 'xand']:
+        for x in ['and', 'nand']:
             while x in p:
                 index = p.index(x)
                 p[index] = [group_operations(p[index-1]),
