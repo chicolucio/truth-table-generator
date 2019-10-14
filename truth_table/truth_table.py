@@ -199,7 +199,7 @@ class Truths:
                      headers='keys',
                      tablefmt=table_format,
                      showindex=index,
-                     colalign=[align] * (len(Truths.asPandas(self).columns) + index)
+                     colalign=[align] * (len(Truths.asPandas(self).columns) + index)  # NOQA long
                      )
         return t
 
@@ -207,7 +207,7 @@ class Truths:
         df = Truths.asPandas(self)
         if col_number == -1:
             pass
-        elif col_number not in (range(1, len(df.columns) + 1)):
+        elif col_number not in range(1, len(df.columns) + 1):
             raise Exception('Indexer is out-of-bounds')
         else:
             col_number = col_number - 1

@@ -29,7 +29,7 @@ or contingency.
 
 ### Importing and syntax
 
-First, let's import the module. `ttg` stands for *truth-table-generator*.
+First, let's import the package. `ttg` stands for *truth-table-generator*.
 
 ```python
 import truth_table as ttg
@@ -132,7 +132,7 @@ The command `print(table)` renders the standard table as seen on above examples:
 +-----+-----+----------+---------+
 ```
 The command `print(table.asPrettyTable())` renders the table with PrettyTable
-module as on the original version of this module:
+package as on the original version of this package:
 ```
 +---+---+--------+-------+
 | p | q | p => q | p = q |
@@ -144,11 +144,11 @@ module as on the original version of this module:
 +---+---+--------+-------+
 ```
 As can be seen, the PrettyTable output has less blank spaces. However, the
-PrettyTable module has much less output options and it is deprecated. So I
-decided to use the Tabulate module as standard.
+PrettyTable package has much less output options and it is deprecated. So I
+decided to use the Tabulate package as standard.
 
 The command `print(table.asTabulate())` renders the table with Tabulate
-module. The first column presents line numbers (that can be disabled with
+package. The first column presents line numbers (that can be disabled with
 the parameter `index=False`):
 ```
 +----+-----+-----+----------+---------+
