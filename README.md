@@ -192,9 +192,9 @@ And this output can be modified with Pandas Styling
 ![pandas02](images/pandas02.png)
 
 More advanced modifications can be done with functions that apply styling changes.
-See the [styles tutorial notebook]() for examples. See the image below for a fancy
-example with two lines and two columns highlighted with yellow background and
-different colors for True and False.
+See the [styles tutorial notebook](styling_tutorial.ipynb) for examples.
+See the image below for a fancy example with two lines and two columns
+highlighted with yellow background and different colors for True and False.
 
 ![pandas03](images/pandas03.png)
 
