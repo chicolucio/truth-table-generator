@@ -58,7 +58,7 @@ print(ttg.Truths(['p', 'q', 'r']))
 +-----+-----+-----+
 ```
 
-A second list of strings can be parsed with propositional expressions created
+A second list of strings can be passed with propositional expressions created
 with logical operators.
 
 ```python
@@ -369,10 +369,15 @@ Apache 2.0, see [LICENSE](LICENSE)
 
 ## Citing
 
-If you use *truth-table-generator* in a scientific publication or in classes, please consider citing as
+If you use *truth-table-generator* in a scientific publication or in classes,
+please consider citing as
 
-F. L. S. Bustamante, *truth-table-generator* - generating truth tables., 2019 - Available at: https://github.com/chicolucio/truth-table-generator
+F. L. S. Bustamante, *truth-table-generator* - generating truth tables., 2019 -
+Available at: https://github.com/chicolucio/truth-table-generator
 
 ## Funding
 
-If you enjoy this project and would like to see many more math and science related programming projects, I would greatly appreciate any assistance. Send me an e-mail to know how to assist. Many more projects are to come and your support will be rewarded with more STEM coding projects :-)
+If you enjoy this project and would like to see many more math and science
+related programming projects, I would greatly appreciate any assistance. Send me
+an e-mail to know how to assist. Many more projects are to come and your support
+will be rewarded with more STEM coding projects :-)
