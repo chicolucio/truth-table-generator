@@ -60,6 +60,7 @@ def setup_package():
           version=VERSION,
           url=URL,
           description=DESCRIPTION,
+          long_description_content_type="text/markdown",
           author=AUTHOR,
           author_email=EMAIL,
           include_package_data=True,
