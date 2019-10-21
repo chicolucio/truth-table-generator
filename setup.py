@@ -29,7 +29,7 @@ LICENSE = "Apache Software License"
 URL = "https://github.com/chicolucio/truth-table-generator"
 AUTHOR = "Francisco Bustamante"
 EMAIL = "chicolucio@gmail.com"
-VERSION = '1.0.0'
+VERSION = '1.0.1'
 KEYWORDS = ['truth', 'table', 'truth table', 'truthtable', 'generator',
             'logic', 'tautology', 'ttg']
 
