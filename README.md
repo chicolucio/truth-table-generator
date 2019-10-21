@@ -3,7 +3,7 @@
 **truth-table-generator** is a tool that allows to generate a truth table.
 It is a fork of *truths* by [tr3buchet](https://github.com/tr3buchet/truths).
 
-![Multiple outputs](images/ttg_small.png)
+![Multiple outputs](https://raw.githubusercontent.com/chicolucio/truth-table-generator/master/images/ttg_small.png)
 
 It merges some of the pull requests in the original and other external helpers.
 The following are some of the changes and enhancements from the original:
@@ -185,18 +185,18 @@ print(table.as_tabulate(index=False, table_format='latex'))
 With an IPython terminal or a Jupyter Notebook, it is possible to render a Pandas
 DataFrame with `table.as_pandas()`:
 
-![pandas01](images/pandas01.png)
+![pandas01](https://raw.githubusercontent.com/chicolucio/truth-table-generator/master/images/pandas01.png)
 
 And this output can be modified with Pandas Styling
 
-![pandas02](images/pandas02.png)
+![pandas02](https://raw.githubusercontent.com/chicolucio/truth-table-generator/master/images/pandas02.png)
 
 More advanced modifications can be done with functions that apply styling changes.
 See the [styles tutorial notebook](styling_tutorial.ipynb) for examples.
 See the image below for a fancy example with two lines and two columns
 highlighted with yellow background and different colors for True and False.
 
-![pandas03](images/pandas03.png)
+![pandas03](https://raw.githubusercontent.com/chicolucio/truth-table-generator/master/images/pandas03.png)
 
 ### The `valuation` function
 
