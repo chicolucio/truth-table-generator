@@ -29,7 +29,7 @@ LICENSE = "Apache Software License"
 URL = "https://github.com/chicolucio/truth-table-generator"
 AUTHOR = "Francisco Bustamante"
 EMAIL = "chicolucio@gmail.com"
-VERSION = '1.0.1'
+VERSION = '1.1.2'
 KEYWORDS = ['truth', 'table', 'truth table', 'truthtable', 'generator',
             'logic', 'tautology', 'ttg']
 
@@ -70,7 +70,8 @@ def setup_package():
           long_description=readme(),
           classifiers=CLASSIFIERS,
           packages=find_packages(exclude=['tests', 'tests.*']),
-          entry_points={'console_scripts': ['ttg_cli.py = truth_table.ttg_cli:clielement']},
+          entry_points={'console_scripts': [
+              'ttg_cli.py = ttg.ttg_cli:clielement']},
           )
 
 
