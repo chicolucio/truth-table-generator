@@ -104,7 +104,7 @@ def solve_phrase(phrase):
 
 
 def group_operations(phrase):
-    """Recursively groups logical operations into seperate lists based on
+    """Recursively groups logical operations into separate lists based on
     the order of operations such that each list is one operation.
 
     Order of operations is:
@@ -141,6 +141,7 @@ class Truths:
     """
     Class Truhts with modules for table formatting, valuation and CLI
     """
+
     def __init__(self, bases=None, phrases=None, ints=True, ascending=False):
         if not bases:
             raise Exception('Base items are required')
@@ -149,8 +150,10 @@ class Truths:
         self.ints = ints
 
         # generate the sets of booleans for the bases
-        if ascending: order = [False, True]
-        else: order = [True, False]
+        if ascending:
+            order = [False, True]
+        else:
+            order = [True, False]
 
         self.base_conditions = list(itertools.product(order,
                                                       repeat=len(bases)))
@@ -175,7 +178,7 @@ class Truths:
         eval_phrases = []
         for phrase in self.phrases:
             # substitute bases in phrase with boolean values as strings
-            phrase = self.p.sub(lambda match: str(bools[match.group(0)]), phrase) # NOQA long line
+            phrase = self.p.sub(lambda match: str(bools[match.group(0)]), phrase)  # NOQA long line
             # wrap phrase in parens
             phrase = '(' + phrase + ')'
             # parse the expression using pyparsing
