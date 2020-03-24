@@ -141,7 +141,7 @@ class Truths:
     """
     Class Truhts with modules for table formatting, valuation and CLI
     """
-    def __init__(self, bases=None, phrases=None, ints=True):
+    def __init__(self, bases=None, phrases=None, ints=True, ascending=False):
         if not bases:
             raise Exception('Base items are required')
         self.bases = bases
@@ -149,7 +149,10 @@ class Truths:
         self.ints = ints
 
         # generate the sets of booleans for the bases
-        self.base_conditions = list(itertools.product([True, False],
+        if ascending: order = [False, True]
+        else: order = [True, False]
+
+        self.base_conditions = list(itertools.product(order,
                                                       repeat=len(bases)))
 
         # regex to match whole words defined in self.bases
