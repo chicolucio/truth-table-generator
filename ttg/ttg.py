@@ -112,8 +112,6 @@ def group_operations(phrase):
         not, and, or, implication
     """
     if isinstance(phrase, list):
-        if len(phrase) == 1:
-            return phrase
         for operator in ['not', '~', '-']:
             while operator in phrase:
                 index = phrase.index(operator)
@@ -163,7 +161,7 @@ class Truths:
         # used to add object context to variables in self.phrases
         self.p = re.compile(r'(?<!\w)(' + '|'.join(self.bases) + r')(?!\w)')
 
-        # uesd for parsing logical operations and parenthesis
+        # used for parsing logical operations and parenthesis
         self.to_match = pyparsing.Word(pyparsing.alphanums)
         for item in itertools.chain(self.bases,
                                     [key for key, val in OPERATIONS.items()]):
