@@ -192,9 +192,8 @@ class Truths:
         # add the bases and evaluated phrases to create a single row
         row = [val for key, val in bools.items()] + eval_phrases
         if self.ints:
-            return [int(c) for c in row]
-        else:
-            return row
+            row = [int(c) for c in row]
+        return row
 
     def as_prettytable(self):
         """
@@ -242,11 +241,12 @@ class Truths:
             col_number = col_number - 1
 
         if sum(df.iloc[:, col_number]) == len(df):
-            return 'Tautology'
+            val = 'Tautology'
         elif sum(df.iloc[:, col_number]) == 0:
-            return 'Contradiction'
+            val = 'Contradiction'
         else:
-            return 'Contingency'
+            val = 'Contingency'
+        return val
 
     def __str__(self):
         table = Truths.as_tabulate(self, index=False)
