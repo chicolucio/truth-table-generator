@@ -1,6 +1,13 @@
 # flake8: noqa
 
 from ttg.ttg import Truths
+import pytest
+
+
+def test_no_base_exception():
+    with pytest.raises(Exception) as excinfo:
+        Truths()
+    assert 'Base items are required' in str(excinfo.value)
 
 
 def test_no_propositions_default():
@@ -171,6 +178,16 @@ def test_valuation_contradiction():
 |  0  |      0       |
 +-----+--------------+""")
     table.valuation() == 'Contradiction'
+
+
+def test_valuation_out_of_bounds_exception():
+    table = Truths(['p'], ['p and (~p)'])
+    with pytest.raises(Exception) as excinfo:
+        table.valuation(-3)
+    assert 'Indexer is out-of-bounds' in str(excinfo.value)
+    with pytest.raises(Exception) as excinfo:
+        table.valuation(3)
+    assert 'Indexer is out-of-bounds' in str(excinfo.value)
 
 
 def test_tautologies_inference_rules():
