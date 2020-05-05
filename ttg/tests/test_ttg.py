@@ -138,6 +138,28 @@ def test_implies_operators():
 +-----+-----+----------+---------------+""")
 
 
+def test_single_base():
+    table = Truths(['p'])
+    assert str(table) == \
+        ("""+-----+
+|  p  |
+|-----|
+|  1  |
+|  0  |
++-----+""")
+
+
+def test_single_base_proposition():
+    table = Truths(['p'], ['p'])
+    assert str(table) == \
+        ("""+-----+-----+
+|  p  |  p  |
+|-----+-----|
+|  1  |  1  |
+|  0  |  0  |
++-----+-----+""")
+
+
 def test_valuation_tautology():
     table = Truths(['p', 'q'], ['(p and q) => (p or q)'])
     assert str(table) == \
