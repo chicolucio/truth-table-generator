@@ -5,6 +5,11 @@ It is a fork of *truths* by [tr3buchet](https://github.com/tr3buchet/truths).
 
 ![Multiple outputs](https://raw.githubusercontent.com/chicolucio/truth-table-generator/master/images/ttg_small.png)
 
+[![Build Status](https://travis-ci.com/chicolucio/truth-table-generator.svg?branch=master)](https://travis-ci.com/chicolucio/truth-table-generator)
+[![Updates](https://pyup.io/repos/github/chicolucio/truth-table-generator/shield.svg)](https://pyup.io/repos/github/chicolucio/truth-table-generator/)
+[![Python 3](https://pyup.io/repos/github/chicolucio/truth-table-generator/python-3-shield.svg)](https://pyup.io/repos/github/chicolucio/truth-table-generator/)
+[![codecov](https://codecov.io/gh/chicolucio/truth-table-generator/branch/master/graph/badge.svg)](https://codecov.io/gh/chicolucio/truth-table-generator)
+
 It merges some of the pull requests in the original and other external helpers.
 The following are some of the changes and enhancements from the original:
 
