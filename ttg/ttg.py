@@ -42,7 +42,7 @@ import pyparsing
 import pandas as pd
 import numpy as np
 from tabulate import tabulate
-
+from distutils.util import strtobool
 
 # dict of boolean operations
 OPERATIONS = {
@@ -77,10 +77,11 @@ def string_to_bool(string):
     """Converts a string to boolean if string is either 'True' or 'False'
     otherwise returns it unchanged.
     """
-    if string == 'True':
-        return True
-    elif string == 'False':
-        return False
+
+    try:
+        string = bool(strtobool(string))
+    except ValueError:
+        pass
     return string
 
 
