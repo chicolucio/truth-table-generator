@@ -119,6 +119,26 @@ print(ttg.Truths(['p', 'q'], ['p and q', 'p or q', '(p or (~q)) => (~p)'], ints=
 +-------+-------+-----------+----------+-----------------------+
 ```
 
+### Reverse output option
+
+If you prefer to have propositions in ascending order (0/False before 1/True),
+there is the `ascending` parameter that can be set to `True`. Let's change
+the above example to ascending order:
+
+```python
+print(ttg.Truths(['p', 'q'], ['p and q', 'p or q', '(p or (~q)) => (~p)'], ints=False, ascending=True))
+```
+```
++-------+-------+-----------+----------+-----------------------+
+|   p   |   q   |  p and q  |  p or q  |  (p or (~q)) => (~p)  |
+|-------+-------+-----------+----------+-----------------------|
+| False | False |   False   |  False   |         True          |
+| False | True  |   False   |   True   |         True          |
+| True  | False |   False   |   True   |         False         |
+| True  | True  |   True    |   True   |         False         |
++-------+-------+-----------+----------+-----------------------+
+```
+
 ### Formatting options with PrettyTable and Tabulate
 
 For more formatting options, let's create a truth table variable:
@@ -250,7 +270,7 @@ For those who work in the terminal there is a simple command line interface
 the following syntax according to its `--help`:
 
 ```
-usage: ttg_cli.py [-h] [-p PROPOSITIONS] [-i INTS] variables
+usage: ttg_cli.py [-h] [-p PROPOSITIONS] [-i INTS] [-a ASCENDING] variables
 
 positional arguments:
   variables             List of variables e. g. "['p', 'q']"
@@ -260,6 +280,8 @@ optional arguments:
   -p PROPOSITIONS, --propositions PROPOSITIONS
                         List of propositions e. g. "['p or q', 'p and q']"
   -i INTS, --ints INTS  True for 0 and 1; False for words
+  -a ASCENDING, --ascending ASCENDING
+                        True for reverse output (False before True)
 ```
 
 As seen, the list of variables is mandatory. Note that the lists must be between
@@ -338,6 +360,26 @@ $ ttg_cli.py "['p', 'q', 'r']" -p "['p or q', 'p and q or r']" -i False
 | False | True  | False |   True   |     False      |
 | False | False | True  |  False   |      True      |
 | False | False | False |  False   |     False      |
++-------+-------+-------+----------+----------------+
+```
+
+In ascending order (0/False before 1/True):
+
+```bash
+$ ttg_cli.py "['p', 'q', 'r']" -p "['p or q', 'p and q or r']" -i False -a True
+```
+```
++-------+-------+-------+----------+----------------+
+|   p   |   q   |   r   |  p or q  |  p and q or r  |
+|-------+-------+-------+----------+----------------|
+| False | False | False |  False   |     False      |
+| False | False | True  |  False   |      True      |
+| False | True  | False |   True   |     False      |
+| False | True  | True  |   True   |      True      |
+| True  | False | False |   True   |     False      |
+| True  | False | True  |   True   |      True      |
+| True  | True  | False |   True   |      True      |
+| True  | True  | True  |   True   |      True      |
 +-------+-------+-------+----------+----------------+
 ```
 
