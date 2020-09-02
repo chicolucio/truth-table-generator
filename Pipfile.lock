@@ -305,10 +305,9 @@
         },
         "traitlets": {
             "hashes": [
-                "sha256:70b4c6a1d9019d7b4f6846832288f86998aa3b9207c6821f3578a6a6a467fe44",
-                "sha256:d023ee369ddd2763310e4c3eae1ff649689440d4ae59d7485eb4cfbbe3e359f7"
+                "sha256:539e2fa2d0539953f0527b36ed107a69a89fe9deaa6ec4a03aee30c314d56d16"
             ],
-            "version": "==4.3.3"
+            "version": "==5.0.1"
         },
         "wcwidth": {
             "hashes": [
