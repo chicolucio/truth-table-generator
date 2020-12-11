@@ -32,11 +32,10 @@
         },
         "ipykernel": {
             "hashes": [
-                "sha256:003c9c1ab6ff87d11f531fee2b9ca59affab19676fc6b2c21da329aef6e73499",
-                "sha256:2937373c356fa5b634edb175c5ea0e4b25de8008f7c194f2d49cfbd1f9c970a8"
+                "sha256:2ab1777581376c4847908ddc71e0098fc20e0674e48d0d3d5acd94264823f2a9",
+                "sha256:b61a7ef2bf710ddeecbaef488e350c6cd1e70da836c7907c28f3f45af2852554"
             ],
-            "index": "pypi",
-            "version": "==5.2.1"
+            "version": "==5.4.1"
         },
         "ipython": {
             "hashes": [
