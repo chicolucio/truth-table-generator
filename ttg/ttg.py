@@ -177,7 +177,7 @@ class Truths:
         eval_phrases = []
         for phrase in self.phrases:
             # substitute bases in phrase with boolean values as strings
-            phrase = self.p.sub(lambda match: str(bools[match.group(0)]), phrase)  # NOQA long line
+            phrase = self.p.sub(lambda match_: str(bools[match_.group(0)]), phrase)  # NOQA long line
             # wrap phrase in parens
             phrase = '(' + phrase + ')'
             # parse the expression using pyparsing
@@ -223,7 +223,8 @@ class Truths:
                          headers='keys',
                          tablefmt=table_format,
                          showindex=index,
-                         colalign=[align] * (len(Truths.as_pandas(self).columns) + index)  # NOQA long
+                         colalign=[align] * (len(Truths.as_pandas(self).columns) + index),  # NOQA long
+                         disable_numparse=True,
                          )
         return table
 
