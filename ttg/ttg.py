@@ -59,6 +59,12 @@ OPERATIONS = {
     "!=": (lambda x, y: x != y),
 }
 
+# Lookup table for single-operand operations
+SINGLE_OPERAND_OPS = {"not", "~", "-"}
+
+# Lookup table for double-operand operations
+DOUBLE_OPERAND_OPS = {"and", "nand", "or", "nor", "xor", "=>", "implies", "=", "!="}
+
 
 def recursive_map(func, data):
     """Recursively applies a map function to a list and all sublists."""
@@ -82,18 +88,25 @@ def solve_phrase(phrase):
     """
     if isinstance(phrase, bool):
         return phrase
+
     if isinstance(phrase, list):
-        # list with just a list in it
-        if len(phrase) == 1:
+        n = len(phrase)
+
+        # List with just a list in it
+        if n == 1:
             return solve_phrase(phrase[0])
-        # single operand operation
-        if len(phrase) == 2:
+
+        # Single operand operation
+        if n == 2 and phrase[0] in SINGLE_OPERAND_OPS:
             return OPERATIONS[phrase[0]](solve_phrase(phrase[1]))
-        # double operand operation
-        else:
+
+        # Double operand operation
+        if n >= 3 and phrase[1] in DOUBLE_OPERAND_OPS:
             return OPERATIONS[phrase[1]](
-                solve_phrase(phrase[0]), solve_phrase([phrase[2]])
+                solve_phrase(phrase[0]), solve_phrase(phrase[2])
             )
+
+        raise ValueError("Invalid expression")
 
 
 def group_operations(phrase):
