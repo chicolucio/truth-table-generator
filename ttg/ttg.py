@@ -42,7 +42,6 @@ import pyparsing
 import pandas as pd
 import numpy as np
 from tabulate import tabulate
-from distutils.util import strtobool
 
 # dict of boolean operations
 OPERATIONS = {
@@ -70,14 +69,10 @@ def recursive_map(func, data):
 
 
 def string_to_bool(string):
-    """Converts a string to boolean if string is either 'True' or 'False'
-    otherwise returns it unchanged.
-    """
-
-    try:
-        string = bool(strtobool(string))
-    except ValueError:
-        pass
+    if string == "True":
+        return True
+    if string == "False":
+        return False
     return string
 
 
@@ -154,6 +149,7 @@ class Truths:
         self.bases = bases
         self.phrases = phrases or []
         self.ints = ints
+        self.df = None
 
         # generate the sets of booleans for the bases
         if ascending:
@@ -217,12 +213,13 @@ class Truths:
         """
         Table as Pandas DataFrame
         """
-        df_columns = self.bases + self.phrases
-        df = pd.DataFrame(columns=df_columns)
-        for conditions_set in self.base_conditions:
-            df.loc[len(df)] = self.calculate(*conditions_set)
-        df.index = np.arange(1, len(df) + 1)  # index starting in one
-        return df
+        if self.df is None:  # Only generate DataFrame if it hasn't been generated yet
+            df_columns = self.bases + self.phrases
+            self.df = pd.DataFrame(columns=df_columns)
+            for conditions_set in self.base_conditions:
+                self.df.loc[len(self.df)] = self.calculate(*conditions_set)
+            self.df.index = np.arange(1, len(self.df) + 1)  # index starting in one
+        return self.df
 
     def as_tabulate(self, index=True, table_format="psql", align="center"):
         """
@@ -244,7 +241,8 @@ class Truths:
         Evaluates an expression in a table column as a tautology, a
         contradiction or a contingency
         """
-        df = Truths.as_pandas(self)
+
+        df = self.as_pandas()
         if col_number == -1:
             pass
         elif col_number not in range(1, len(df.columns) + 1):
