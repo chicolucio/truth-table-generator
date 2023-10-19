@@ -42,21 +42,38 @@ import pyparsing
 import pandas as pd
 from tabulate import tabulate
 
-# dict of boolean operations
-OPERATIONS = {
-    "not": (lambda x: not x),
-    "-": (lambda x: not x),
-    "~": (lambda x: not x),
-    "or": (lambda x, y: x or y),
-    "nor": (lambda x, y: not (x or y)),
-    "xor": (lambda x, y: x != y),
-    "and": (lambda x, y: x and y),
-    "nand": (lambda x, y: not (x and y)),
-    "=>": (lambda x, y: (not x) or y),
-    "implies": (lambda x, y: (not x) or y),
-    "=": (lambda x, y: x == y),
-    "!=": (lambda x, y: x != y),
+# Base operations
+BASE_OPERATIONS = {
+    "not": lambda x: not x,
+    "or": lambda x, y: x or y,
+    "nor": lambda x, y: not (x or y),
+    "xor": lambda x, y: x != y,
+    "and": lambda x, y: x and y,
+    "nand": lambda x, y: not (x and y),
+    "implies": lambda x, y: not x or y,
+    "equals": lambda x, y: x == y,
+    "not_equals": lambda x, y: x != y,
 }
+
+# Aliases for each base operation
+OPERATION_ALIASES = {
+    "not": ["not", "-", "~"],
+    "or": ["or"],
+    "nor": ["nor"],
+    "xor": ["xor"],
+    "and": ["and"],
+    "nand": ["nand"],
+    "implies": ["=>", "implies"],
+    "equals": ["="],
+    "not_equals": ["!="],
+}
+
+# Create the full OPERATIONS dictionary
+OPERATIONS = {}
+for base_op, func in BASE_OPERATIONS.items():
+    for alias in OPERATION_ALIASES[base_op]:
+        OPERATIONS[alias] = func
+
 
 # Lookup table for single-operand operations
 SINGLE_OPERAND_OPS = ("not", "~", "-")
