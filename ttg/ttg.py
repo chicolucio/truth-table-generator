@@ -206,33 +206,52 @@ class Truths:
             self.to_match |= item
         self.parens = pyparsing.nestedExpr("(", ")", content=self.to_match)
 
+    def evaluate_phrase(self, phrase, bools):
+        """
+        Evaluate a single logical phrase based on the boolean values provided.
+
+        Parameters:
+            phrase (str): The logical phrase to be evaluated.
+            bools (dict): A dictionary containing the boolean values for base variables.
+
+        Returns:
+            bool: The result of the logical expression.
+        """
+        # Substitute bases in phrase with boolean values as strings
+        substituted_phrase = self.p.sub(
+            lambda match_: str(bools[match_.group(0)]), phrase
+        )
+
+        # Wrap phrase in parens
+        wrapped_phrase = f"({substituted_phrase})"
+
+        # Parse the expression using pyparsing
+        interpreted = self.parens.parseString(wrapped_phrase).asList()[0]
+
+        # Convert any 'True' or 'False' to boolean values
+        interpreted = recursive_map(string_to_bool, interpreted)
+
+        # Group operations
+        interpreted = group_operations(interpreted)
+
+        # Evaluate the phrase
+        return solve_phrase(interpreted)
+
     def calculate(self, *args):
         """
         Evaluates the logical value for each expression
         """
         bools = dict(zip(self.bases, args))
 
-        eval_phrases = []
-        for phrase in self.phrases:
-            # substitute bases in phrase with boolean values as strings
-            phrase = self.p.sub(
-                lambda match_: str(bools[match_.group(0)]), phrase
-            )  # NOQA long line
-            # wrap phrase in parens
-            phrase = "(" + phrase + ")"
-            # parse the expression using pyparsing
-            interpreted = self.parens.parseString(phrase).asList()[0]
-            # convert any 'True' or 'False' to boolean values
-            interpreted = recursive_map(string_to_bool, interpreted)
-            # group operations
-            interpreted = group_operations(interpreted)
-            # evaluate the phrase
-            eval_phrases.append(solve_phrase(interpreted))
+        # Evaluate each phrase
+        eval_phrases = [self.evaluate_phrase(phrase, bools) for phrase in self.phrases]
 
-        # add the bases and evaluated phrases to create a single row
-        row = [val for key, val in bools.items()] + eval_phrases
+        # Create a single row with base variables and the evaluated phrases
+        row = list(bools.values()) + eval_phrases
+
         if self.ints:
             row = [int(c) for c in row]
+
         return row
 
     def as_prettytable(self):
