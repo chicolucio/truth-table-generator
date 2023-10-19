@@ -229,6 +229,7 @@ class Truths:
             table.add_row(self.calculate(*conditions_set))
         return table
 
+    @property
     def as_pandas(self):
         """
         Table as Pandas DataFrame
@@ -245,13 +246,13 @@ class Truths:
         """
         Returns table using tabulate package
         """
+        df = self.as_pandas
         table = tabulate(
-            Truths.as_pandas(self),
+            df,
             headers="keys",
             tablefmt=table_format,
             showindex=index,
-            colalign=[align]
-            * (len(Truths.as_pandas(self).columns) + index),  # NOQA long
+            colalign=[align] * (len(df.columns) + index),
             disable_numparse=True,
         )
         return table
@@ -262,7 +263,7 @@ class Truths:
         contradiction or a contingency
         """
 
-        df = self.as_pandas()
+        df = self.as_pandas
         if col_number == -1:
             pass
         elif col_number not in range(1, len(df.columns) + 1):

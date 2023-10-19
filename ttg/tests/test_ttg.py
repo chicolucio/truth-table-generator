@@ -267,10 +267,8 @@ def test_equivalence_morgan_01():
 +-----+-----+--------------+----------------+"""
     )
 
-    assert (
-        de_morgan_law.as_pandas()
-        .iloc[:, -1]
-        .equals(de_morgan_law.as_pandas().iloc[:, -2])
+    assert de_morgan_law.as_pandas.iloc[:, -1].equals(
+        de_morgan_law.as_pandas.iloc[:, -2]
     )
 
 
@@ -288,10 +286,8 @@ def test_equivalence_morgan_02():
 +-----+-----+-------------+-----------------+"""
     )
 
-    assert (
-        de_morgan_law.as_pandas()
-        .iloc[:, -1]
-        .equals(de_morgan_law.as_pandas().iloc[:, -2])
+    assert de_morgan_law.as_pandas.iloc[:, -1].equals(
+        de_morgan_law.as_pandas.iloc[:, -2]
     )
 
 
@@ -309,7 +305,7 @@ def test_equivalence_negated_conditional():
 +-----+-----+-------------+--------------+"""
     )
 
-    assert neg_cond.as_pandas().iloc[:, -1].equals(neg_cond.as_pandas().iloc[:, -2])
+    assert neg_cond.as_pandas.iloc[:, -1].equals(neg_cond.as_pandas.iloc[:, -2])
 
 
 def test_prettytable():
