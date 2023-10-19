@@ -40,7 +40,6 @@ import re
 from prettytable import PrettyTable
 import pyparsing
 import pandas as pd
-import numpy as np
 from tabulate import tabulate
 
 # dict of boolean operations
@@ -255,7 +254,7 @@ class Truths:
             self.df = pd.DataFrame(columns=df_columns)
             for conditions_set in self.base_conditions:
                 self.df.loc[len(self.df)] = self.calculate(*conditions_set)
-            self.df.index = np.arange(1, len(self.df) + 1)  # index starting in one
+            self.df.index = range(1, len(self.df) + 1)  # index starting in one
         return self.df
 
     def as_tabulate(self, index=True, table_format="psql", align="center"):
