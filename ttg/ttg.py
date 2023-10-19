@@ -158,6 +158,18 @@ def group_operations(phrase):
     return phrase
 
 
+class BaseItemsRequired(Exception):
+    """Exception raised when no base items are provided."""
+
+    pass
+
+
+class InvalidIndex(Exception):
+    """Exception raised for out-of-bounds indexer."""
+
+    pass
+
+
 class Truths:
     """
     Class Truhts with modules for table formatting, valuation and CLI
@@ -165,7 +177,7 @@ class Truths:
 
     def __init__(self, bases=None, phrases=None, ints=True, ascending=False):
         if not bases:
-            raise Exception("Base items are required")
+            raise BaseItemsRequired("Base items are required")
         self.bases = bases
         self.phrases = phrases or []
         self.ints = ints
@@ -267,7 +279,7 @@ class Truths:
         if col_number == -1:
             pass
         elif col_number not in range(1, len(df.columns) + 1):
-            raise Exception("Indexer is out-of-bounds")
+            raise InvalidIndex("Indexer is out-of-bounds")
         else:
             col_number = col_number - 1
 
