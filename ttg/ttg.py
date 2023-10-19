@@ -176,26 +176,30 @@ class Truths:
     """
 
     def __init__(self, bases=None, phrases=None, ints=True, ascending=False):
+        self.validate_bases(bases)
+        self.initialize_variables(bases, phrases, ints)
+        self.set_base_conditions(ascending)
+        self.compile_regular_expressions()
+        self.configure_parser()
+
+    def validate_bases(self, bases):
         if not bases:
             raise BaseItemsRequired("Base items are required")
+
+    def initialize_variables(self, bases, phrases, ints):
         self.bases = bases
         self.phrases = phrases or []
         self.ints = ints
         self.df = None
 
-        # generate the sets of booleans for the bases
-        if ascending:
-            order = [False, True]
-        else:
-            order = [True, False]
+    def set_base_conditions(self, ascending):
+        order = [False, True] if ascending else [True, False]
+        self.base_conditions = list(itertools.product(order, repeat=len(self.bases)))
 
-        self.base_conditions = list(itertools.product(order, repeat=len(bases)))
-
-        # regex to match whole words defined in self.bases
-        # used to add object context to variables in self.phrases
+    def compile_regular_expressions(self):
         self.p = re.compile(r"(?<!\w)(" + "|".join(self.bases) + r")(?!\w)")
 
-        # used for parsing logical operations and parenthesis
+    def configure_parser(self):
         self.to_match = pyparsing.Word(pyparsing.alphanums)
         for item in itertools.chain(
             self.bases, [key for key, val in OPERATIONS.items()]
