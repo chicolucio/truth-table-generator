@@ -60,10 +60,10 @@ OPERATIONS = {
 }
 
 # Lookup table for single-operand operations
-SINGLE_OPERAND_OPS = {"not", "~", "-"}
+SINGLE_OPERAND_OPS = ("not", "~", "-")
 
 # Lookup table for double-operand operations
-DOUBLE_OPERAND_OPS = {"and", "nand", "or", "nor", "xor", "=>", "implies", "=", "!="}
+DOUBLE_OPERAND_OPS = ("and", "nand", "or", "nor", "xor", "=>", "implies", "=", "!=")
 
 
 def recursive_map(func, data):
@@ -109,44 +109,51 @@ def solve_phrase(phrase):
         raise ValueError("Invalid expression")
 
 
-def group_operations(phrase):
-    """Recursively groups logical operations into separate lists based on
-    the order of operations such that each list is one operation.
+def group_unary_operations(phrase, unary_operators):
+    i = 0
+    while i < len(phrase):
+        if phrase[i] in unary_operators:
+            # Convert the unary operation into a list
+            phrase[i] = [phrase[i], group_operations(phrase[i + 1])]
+            del phrase[i + 1]
+        i += 1
 
-    Order of operations is:
-        not, and, or, implication
+
+def group_binary_operations(phrase, binary_operators):
+    i = 0
+    while i < len(phrase):
+        if phrase[i] in binary_operators:
+            # Convert the binary operation into a list
+            phrase[i] = [
+                group_operations(phrase[i - 1]),
+                phrase[i],
+                group_operations(phrase[i + 1]),
+            ]
+            # Remove the operands that were just grouped
+            del phrase[i + 1]
+            del phrase[i - 1]
+        i += 1
+
+
+def group_operations(phrase):
     """
+    Groups operations in the phrase.
+
+    Parameters:
+        phrase (Union[list, bool]): The phrase to be grouped.
+
+    Returns:
+        Union[list, bool]: The grouped phrase.
+    """
+
     if isinstance(phrase, list):
         # Handle inner operations first
         for i, item in enumerate(phrase):
             if isinstance(item, list):
                 phrase[i] = group_operations(item)
 
-        for operator in ["not", "~", "-"]:
-            while operator in phrase:
-                index = phrase.index(operator)
-                phrase[index] = [operator, group_operations(phrase[index + 1])]
-                phrase.pop(index + 1)
-        for operator in ["and", "nand"]:
-            while operator in phrase:
-                index = phrase.index(operator)
-                phrase[index] = [
-                    group_operations(phrase[index - 1]),
-                    operator,
-                    group_operations(phrase[index + 1]),
-                ]
-                phrase.pop(index + 1)
-                phrase.pop(index - 1)
-        for operator in ["or", "nor", "xor"]:
-            while operator in phrase:
-                index = phrase.index(operator)
-                phrase[index] = [
-                    group_operations(phrase[index - 1]),
-                    operator,
-                    group_operations(phrase[index + 1]),
-                ]
-                phrase.pop(index + 1)
-                phrase.pop(index - 1)
+        group_unary_operations(phrase, SINGLE_OPERAND_OPS)
+        group_binary_operations(phrase, DOUBLE_OPERAND_OPS)
 
     return phrase
 
