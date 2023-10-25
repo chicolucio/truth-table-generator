@@ -36,142 +36,18 @@ truth-table-generator main file
 """
 
 import itertools
-import re
 from prettytable import PrettyTable
-import pyparsing
 import pandas as pd
 from tabulate import tabulate
 
-# Base operations
-BASE_OPERATIONS = {
-    "not": lambda x: not x,
-    "or": lambda x, y: x or y,
-    "nor": lambda x, y: not (x or y),
-    "xor": lambda x, y: x != y,
-    "and": lambda x, y: x and y,
-    "nand": lambda x, y: not (x and y),
-    "implies": lambda x, y: not x or y,
-    "equals": lambda x, y: x == y,
-    "not_equals": lambda x, y: x != y,
-}
-
-# Aliases for each base operation
-OPERATION_ALIASES = {
-    "not": ["not", "-", "~"],
-    "or": ["or"],
-    "nor": ["nor"],
-    "xor": ["xor"],
-    "and": ["and"],
-    "nand": ["nand"],
-    "implies": ["=>", "implies"],
-    "equals": ["="],
-    "not_equals": ["!="],
-}
-
-# Create the full OPERATIONS dictionary
-OPERATIONS = {}
-for base_op, func in BASE_OPERATIONS.items():
-    for alias in OPERATION_ALIASES[base_op]:
-        OPERATIONS[alias] = func
-
-
-# Lookup table for single-operand operations
-SINGLE_OPERAND_OPS = ("not", "~", "-")
-
-# Lookup table for double-operand operations
-DOUBLE_OPERAND_OPS = ("and", "nand", "or", "nor", "xor", "=>", "implies", "=", "!=")
-
-
-def recursive_map(func, data):
-    """Recursively applies a map function to a list and all sublists."""
-    if isinstance(data, list):
-        return [recursive_map(func, elem) for elem in data]
-    else:
-        return func(data)
-
-
-def string_to_bool(string):
-    if string == "True":
-        return True
-    if string == "False":
-        return False
-    return string
-
-
-def solve_phrase(phrase):
-    """Recursively evaluates a logical phrase that has been grouped into
-    sublists where each list is one operation.
-    """
-    if isinstance(phrase, bool):
-        return phrase
-
-    if isinstance(phrase, list):
-        n = len(phrase)
-
-        # List with just a list in it
-        if n == 1:
-            return solve_phrase(phrase[0])
-
-        # Single operand operation
-        if n == 2 and phrase[0] in SINGLE_OPERAND_OPS:
-            return OPERATIONS[phrase[0]](solve_phrase(phrase[1]))
-
-        # Double operand operation
-        if n >= 3 and phrase[1] in DOUBLE_OPERAND_OPS:
-            return OPERATIONS[phrase[1]](
-                solve_phrase(phrase[0]), solve_phrase(phrase[2])
-            )
-
-        raise ValueError("Invalid expression")
-
-
-def group_unary_operations(phrase, unary_operators):
-    i = 0
-    while i < len(phrase):
-        if phrase[i] in unary_operators:
-            # Convert the unary operation into a list
-            phrase[i] = [phrase[i], group_operations(phrase[i + 1])]
-            del phrase[i + 1]
-        i += 1
-
-
-def group_binary_operations(phrase, binary_operators):
-    i = 0
-    while i < len(phrase):
-        if phrase[i] in binary_operators:
-            # Convert the binary operation into a list
-            phrase[i] = [
-                group_operations(phrase[i - 1]),
-                phrase[i],
-                group_operations(phrase[i + 1]),
-            ]
-            # Remove the operands that were just grouped
-            del phrase[i + 1]
-            del phrase[i - 1]
-        i += 1
-
-
-def group_operations(phrase):
-    """
-    Groups operations in the phrase.
-
-    Parameters:
-        phrase (Union[list, bool]): The phrase to be grouped.
-
-    Returns:
-        Union[list, bool]: The grouped phrase.
-    """
-
-    if isinstance(phrase, list):
-        # Handle inner operations first
-        for i, item in enumerate(phrase):
-            if isinstance(item, list):
-                phrase[i] = group_operations(item)
-
-        group_unary_operations(phrase, SINGLE_OPERAND_OPS)
-        group_binary_operations(phrase, DOUBLE_OPERAND_OPS)
-
-    return phrase
+from ttg.tools.evaluation import recursive_map
+from ttg.tools.evaluation import string_to_bool
+from ttg.tools.evaluation import solve_phrase
+from ttg.tools.parsing import (
+    compile_regular_expressions,
+    configure_parser,
+    group_operations,
+)
 
 
 class BaseItemsRequired(Exception):
@@ -195,8 +71,6 @@ class Truths:
         self.validate_bases(bases)
         self.initialize_variables(bases, phrases, ints)
         self.set_base_conditions(ascending)
-        self.compile_regular_expressions()
-        self.configure_parser()
 
     def validate_bases(self, bases):
         if not bases:
@@ -207,21 +81,12 @@ class Truths:
         self.phrases = phrases or []
         self.ints = ints
         self.df = None
+        self.p = compile_regular_expressions(self.bases)
+        self.parens = configure_parser(self.bases)
 
     def set_base_conditions(self, ascending):
         order = [False, True] if ascending else [True, False]
         self.base_conditions = list(itertools.product(order, repeat=len(self.bases)))
-
-    def compile_regular_expressions(self):
-        self.p = re.compile(r"(?<!\w)(" + "|".join(self.bases) + r")(?!\w)")
-
-    def configure_parser(self):
-        self.to_match = pyparsing.Word(pyparsing.alphanums)
-        for item in itertools.chain(
-            self.bases, [key for key, val in OPERATIONS.items()]
-        ):
-            self.to_match |= item
-        self.parens = pyparsing.nestedExpr("(", ")", content=self.to_match)
 
     def evaluate_phrase(self, phrase, bools):
         """
