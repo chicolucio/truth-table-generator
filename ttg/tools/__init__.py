@@ -7,19 +7,17 @@ BASE_OPERATIONS = {
     "nand": lambda x, y: not (x and y),
     "implies": lambda x, y: not x or y,
     "equals": lambda x, y: x == y,
-    "not_equals": lambda x, y: x != y,
 }
 
 OPERATION_ALIASES = {
     "not": ["not", "-", "~"],
     "or": ["or"],
     "nor": ["nor"],
-    "xor": ["xor"],
+    "xor": ["xor", "!="],
     "and": ["and"],
     "nand": ["nand"],
     "implies": ["=>", "implies"],
     "equals": ["="],
-    "not_equals": ["!="],
 }
 
 SINGLE_OPERAND_OPS = ("not", "~", "-")
