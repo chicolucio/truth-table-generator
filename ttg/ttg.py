@@ -64,7 +64,7 @@ class InvalidIndex(Exception):
 
 class Truths:
     """
-    Class Truhts with modules for table formatting, valuation and CLI
+    Class Truths with modules for table formatting, valuation and CLI
     """
 
     def __init__(self, bases=None, phrases=None, ints=True, ascending=False):
