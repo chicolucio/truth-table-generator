@@ -5,9 +5,6 @@ It is a fork of *truths* by [tr3buchet](https://github.com/tr3buchet/truths).
 
 ![Multiple outputs](https://raw.githubusercontent.com/chicolucio/truth-table-generator/master/images/ttg_small.png)
 
-[![Build Status](https://travis-ci.com/chicolucio/truth-table-generator.svg?branch=master)](https://travis-ci.com/chicolucio/truth-table-generator)
-[![codecov](https://codecov.io/gh/chicolucio/truth-table-generator/branch/master/graph/badge.svg)](https://codecov.io/gh/chicolucio/truth-table-generator)
-
 It merges some of the pull requests in the original and other external helpers.
 The following are some of the changes and enhancements from the original:
 
@@ -206,14 +203,11 @@ print(table.as_tabulate(index=False, table_format='latex'))
 ### Formatting options with Pandas
 
 With an IPython terminal or a Jupyter Notebook, it is possible to render a Pandas
-DataFrame with `table.as_pandas()`:
+DataFrame with `table.as_pandas`:
 
 ![pandas01](https://raw.githubusercontent.com/chicolucio/truth-table-generator/master/images/pandas01.png)
 
-And this output can be modified with Pandas Styling
-
-![pandas02](https://raw.githubusercontent.com/chicolucio/truth-table-generator/master/images/pandas02.png)
-
+And this output can be modified with Pandas Styling.
 More advanced modifications can be done with functions that apply styling changes.
 See the [styles tutorial notebook](styling_tutorial.ipynb) for examples.
 See the image below for a fancy example with two lines and two columns
@@ -246,7 +240,7 @@ table_val.valuation()
 ```
 'Tautology'
 ```
-If a integer is used as argument, the function classifies the correspondent
+If an integer is used as argument, the function classifies the correspondent
 column:
 ```python
 table_val.valuation(3)

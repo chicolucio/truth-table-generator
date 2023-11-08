@@ -29,50 +29,61 @@ LICENSE = "Apache Software License"
 URL = "https://github.com/chicolucio/truth-table-generator"
 AUTHOR = "Francisco Bustamante"
 EMAIL = "chicolucio@gmail.com"
-VERSION = '1.1.2'
-KEYWORDS = ['truth', 'table', 'truth table', 'truthtable', 'generator',
-            'logic', 'tautology', 'ttg']
+VERSION = "2.0.0"
+KEYWORDS = [
+    "truth",
+    "table",
+    "truth table",
+    "truthtable",
+    "generator",
+    "logic",
+    "tautology",
+    "ttg",
+]
 
 
-CLASSIFIERS = ['Development Status :: 5 - Production/Stable',
-               'Environment :: Console',
-               'Intended Audience :: Science/Research',
-               'License :: OSI Approved :: Apache Software License',
-               'Natural Language :: English',
-               'Programming Language :: Python',
-               'Programming Language :: Python :: 3',
-               'Topic :: Scientific/Engineering :: Mathematics']
+CLASSIFIERS = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
 
 
-DEPENDENCIES = ['numpy', 'pandas', 'PTable', 'pyparsing', 'tabulate', 'jinja2']
+DEPENDENCIES = ["numpy", "pandas", "PTable", "pyparsing", "tabulate", "jinja2"]
 
 
 def readme():
     """Return the contents of the README.md file."""
-    with open('README.md') as freadme:
+    with open("README.md") as freadme:
         return freadme.read()
 
 
 def setup_package():
-    """ Setup instructions """
+    """Setup instructions"""
 
-    setup(name=MAIN_PACKAGE,
-          version=VERSION,
-          url=URL,
-          description=DESCRIPTION,
-          long_description_content_type="text/markdown",
-          author=AUTHOR,
-          author_email=EMAIL,
-          include_package_data=True,
-          install_requires=DEPENDENCIES,
-          keywords=KEYWORDS,
-          license=LICENSE,
-          long_description=readme(),
-          classifiers=CLASSIFIERS,
-          packages=find_packages(exclude=['tests', 'tests.*']),
-          entry_points={'console_scripts': [
-              'ttg_cli.py = ttg.ttg_cli:clielement']},
-          )
+    setup(
+        name=MAIN_PACKAGE,
+        version=VERSION,
+        url=URL,
+        description=DESCRIPTION,
+        long_description_content_type="text/markdown",
+        author=AUTHOR,
+        author_email=EMAIL,
+        include_package_data=True,
+        install_requires=DEPENDENCIES,
+        keywords=KEYWORDS,
+        license=LICENSE,
+        long_description=readme(),
+        classifiers=CLASSIFIERS,
+        python_requires=">=3.10",
+        packages=find_packages(exclude=["tests", "tests.*"]),
+        entry_points={"console_scripts": ["ttg_cli.py = ttg.ttg_cli:clielement"]},
+    )
 
 
 if __name__ == "__main__":
