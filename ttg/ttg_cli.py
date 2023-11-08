@@ -22,43 +22,63 @@ CLI for the truth_table_generator package.
 
 import argparse
 import ast
+
 import ttg
+
+
+def str2bool(value):
+    """Convert a string representation of a boolean to a boolean type."""
+    if isinstance(value, bool):
+        return value
+    if value.lower() in {"yes", "true", "t", "y", "1"}:
+        return True
+    elif value.lower() in {"no", "false", "f", "n", "0"}:
+        return False
+    else:
+        raise argparse.ArgumentTypeError("Boolean value expected.")
 
 
 def clielement():
     """
-    CLI for the truth_table_generator package.
+    Command Line Interface (CLI) for the truth_table_generator package.
     """
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("variables", help="List of variables e. g. \"['p', 'q']\"")
+    parser = argparse.ArgumentParser(description="Generate truth tables.")
+    parser.add_argument(
+        "variables", type=str, help="List of variables e.g., \"['p', 'q']\""
+    )
     parser.add_argument(
         "-p",
         "--propositions",
-        help="List of propositions e. g. \"['p or q', 'p and q']\"",
+        type=str,
+        default="[]",
+        help="List of propositions e.g., \"['p or q', 'p and q']\"",
     )
     parser.add_argument(
-        "-i", "--ints", default="True", help="True for 0 and 1; False for words"
+        "-i",
+        "--ints",
+        type=str2bool,
+        default=True,
+        help="Use integers for boolean values. True for 0 and 1; False for words.",
     )
     parser.add_argument(
         "-a",
         "--ascending",
-        default="False",
-        help="True for reverse output (False before True)",
+        type=str2bool,
+        default=False,
+        help="Sort output in ascending order. True for reverse output (False before True).",  # noqa: E501
     )
+
     args = parser.parse_args()
 
-    variables = ast.literal_eval(args.variables)
-    ints = ast.literal_eval(args.ints)
-    asc = ast.literal_eval(args.ascending)
+    try:
+        variables = ast.literal_eval(args.variables)
+        propositions = ast.literal_eval(args.propositions)
+    except Exception as e:
+        print(f"Error: {e}")
+        return
 
     print()
-    if args.propositions is None:
-        propositions = []
-        print(ttg.Truths(variables, propositions, ints, asc))
-    else:
-        propositions = ast.literal_eval(args.propositions)
-        print(ttg.Truths(variables, propositions, ints, asc))
+    print(ttg.Truths(variables, propositions, args.ints, args.ascending))
     print()
 
 
